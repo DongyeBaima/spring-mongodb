@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+
+    <!-- 1:注解类扫描 -->
+    <context:component-scan base-package="demo1"/>
+    <context:annotation-config/>
+
+    <!-- 2:mongoDB 配置-->
+    <!-- 2.1:mongo客户端-->
+    <mongo:mongo host="127.0.0.1" port="27017"/>
+    <!-- 2.2: mongo工厂-->
+    <mongo:db-factory dbname="rainfodb" mongo-ref="mongo"/>
+    <!-- 2.3: mongoDB Template-->
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
+    </bean>
+
+    <!-- 3: 映射转换器，扫描back-package目录下的文件，根据注释，把他们作为mongoDB的一个collection的映射 -->
+    <mongo:mapping-converter base-package="demo1.data.model"/>
+    <!-- 3: mongo bean的仓库目录，会自动扫描扩展了mongoRepository接口的类进行注入-->
+    <mongo:repositories base-package="demo1.data.dao"/>
+
+
+</beans>
